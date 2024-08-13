@@ -37,7 +37,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             // If the Authorization header is valid, we extract the JWT token
             jwt = authorizationHeader.substring(7);
             // We extract the user email from the JWT token
-            userEmail = jwtService.extractUsernamel(jwt);// extractEmail(jwt);
+            userEmail = jwtService.extractUsername(jwt);// extractEmail(jwt);
         }
 
     }
