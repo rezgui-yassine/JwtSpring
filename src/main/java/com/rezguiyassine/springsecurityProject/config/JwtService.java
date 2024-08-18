@@ -1,6 +1,5 @@
 package com.rezguiyassine.springsecurityProject.config;
 
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -17,17 +16,18 @@ import java.util.function.Function;
 
 @Service
 public class JwtService {
-    private final  static  String SECRET_Key="3F8AD48BDD882413D8FDDCBFB8983";
 
+    // Generate a new secret key that is 256 bits long
+    private final static String SECRET_KEY = "3F8AD48BDD882413D8FDDCBFB8983A1B2C3D4E5F67890A1B2C3D4E5F67890"; // Updated key
 
     // Extract the username from the token
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
-    //generate token with the user details only
+    // Generate token with the user details only
     public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(),userDetails);
+        return generateToken(new HashMap<>(), userDetails);
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
@@ -43,28 +43,22 @@ public class JwtService {
         return extractClaim(token, Claims::getExpiration);
     }
 
-
-
-    // generate a token with the claims and the user details
-    public String generateToken(Map<String ,Object> extrClaims,
-            UserDetails userDetails) {
-
+    // Generate a token with the claims and the user details
+    public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
         return Jwts.builder()
-                .setClaims(extrClaims)
+                .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
-                .setIssuedAt(new java.util.Date(System.currentTimeMillis()))
-                .setExpiration(new java.util.Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
-                .signWith(getSignInKey(),SignatureAlgorithm.HS256)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // Token validity: 10 hours
+                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-
-    // Extract the   claims from the token and returns a specific claim of type T.
-    public <T> T extractClaim(String token , Function<Claims ,T>claimsResolver) {
+    // Extract the claims from the token and return them as a Claims object
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
-
 
     // Extract the claims from the token and return them as a Claims object
     private Claims extractAllClaims(String token) {
@@ -74,9 +68,10 @@ public class JwtService {
                 .parseClaimsJws(token)
                 .getBody();
     }
-    // Get the key from the secret key in the application.properties file and decode it to a byte array and return it as a Key
+
+    // Decode the secret key to a byte array and return it as a Key
     private Key getSignInKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_Key);
+        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }

@@ -18,14 +18,14 @@ import java.util.List;
 @NoArgsConstructor
 
 @Entity
-@Table(name = "_user")
+@Table(name = "_users")
 public class User implements UserDetails {
     @Id
     @GeneratedValue (strategy = GenerationType.AUTO)
     private Integer id;
     private String firstname;
     private String lastname;
-    private String pasword;
+    private String password;
     private String email;
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -38,7 +38,7 @@ public class User implements UserDetails {
 
     @Override
     public String getPassword() {
-        return pasword;
+        return password;
     }
 
     @Override
